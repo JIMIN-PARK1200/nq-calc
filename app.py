@@ -20,9 +20,6 @@ point_value = 2.0
 # 세션 상태 초기화 및 사용자 식별
 user_key = "default"
 
-def get_initial_value(key, default):
-    return st.session_state.user_data[user_key].get(key, default)
-
 if "user_data" not in st.session_state:
     st.session_state.user_data = {}
 
@@ -35,24 +32,29 @@ if user_key not in st.session_state.user_data:
         "margin_per_contract": 1500.0,
     }
 
+# 세션 값 가져오기 (초기 설정만)
 data = st.session_state.user_data[user_key]
 
-# 사용자 입력 (초기값 설정)
-capital = st.number_input("총 자본 입력 (USD)", min_value=1000.0, step=100.0, format="%.2f", value=get_initial_value("capital", 50000.0), key="capital")
-entry_price = st.number_input("진입가 입력", min_value=0.0, step=0.25, format="%.2f", value=get_initial_value("entry_price", 19000.0), key="entry_price")
-stop_price = st.number_input("손절가 입력", min_value=0.0, step=0.25, format="%.2f", value=get_initial_value("stop_price", 18900.0), key="stop_price")
-risk_percent_choice = st.selectbox("허용 손실 한도 (%)", options=[1, 2, 3, 4, 5], index=int(get_initial_value("risk_percent", 0.05) * 100) - 1)
-margin_per_contract = st.number_input("계약당 증거금 (USD)", min_value=500.0, step=100.0, format="%.2f", value=get_initial_value("margin_per_contract", 1500.0), key="margin_per_contract", help="대부분 국내 증권사 기준 약 $1,500입니다.")
+# 사용자 입력
+st.number_input("총 자본 입력 (USD)", min_value=1000.0, step=100.0, format="%.2f", key="capital")
+st.number_input("진입가 입력", min_value=0.0, step=0.25, format="%.2f", key="entry_price")
+st.number_input("손절가 입력", min_value=0.0, step=0.25, format="%.2f", key="stop_price")
+risk_percent_choice = st.selectbox("허용 손실 한도 (%)", options=[1, 2, 3, 4, 5], index=int(data["risk_percent"] * 100) - 1)
+st.number_input("계약당 증거금 (USD)", min_value=500.0, step=100.0, format="%.2f", key="margin_per_contract", help="대부분 국내 증권사 기준 약 $1,500입니다.")
 
 # 입력값 저장
-st.session_state.user_data[user_key]["capital"] = capital
-st.session_state.user_data[user_key]["entry_price"] = entry_price
-st.session_state.user_data[user_key]["stop_price"] = stop_price
+st.session_state.user_data[user_key]["capital"] = st.session_state.capital
+st.session_state.user_data[user_key]["entry_price"] = st.session_state.entry_price
+st.session_state.user_data[user_key]["stop_price"] = st.session_state.stop_price
 st.session_state.user_data[user_key]["risk_percent"] = risk_percent_choice / 100.0
-st.session_state.user_data[user_key]["margin_per_contract"] = margin_per_contract
+st.session_state.user_data[user_key]["margin_per_contract"] = st.session_state.margin_per_contract
 
 # 계산 입력값
+capital = st.session_state.capital
+entry_price = st.session_state.entry_price
+stop_price = st.session_state.stop_price
 risk_percent = risk_percent_choice / 100.0
+margin_per_contract = st.session_state.margin_per_contract
 
 # 손절폭 계산
 point_diff = abs(entry_price - stop_price)
