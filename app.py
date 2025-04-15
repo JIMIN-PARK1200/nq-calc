@@ -1,8 +1,8 @@
 import streamlit as st
 import math
 
-st.set_page_config(page_title="NQ 진입 비중 계산기", page_icon="📈")
-st.title("📈 Micro E-mini NASDAQ (NQ) 진입 비중 계산기")
+st.set_page_config(page_title="MNQ 진입 비중 계산기", page_icon="📈")
+st.title("📈 Micro E-mini NASDAQ (MNQ) 진입 비중 계산기")
 
 st.markdown("""
 이 계산기는 진입가와 손절가를 입력하면 손절폭을 계산하고,
@@ -10,7 +10,7 @@ st.markdown("""
 진입 가능한 **최대 계약 수**, 예상 레버리지,
 그리고 **진입 포지션 증거금 기준 실질 레버리지**를 계산해줍니다.
 
-> 기준 상품: **Micro E-mini Nasdaq Futures (NQ)**  
+> 기준 상품: **Micro E-mini Nasdaq Futures (MNQ)**  
 > 1포인트당 $2 손익 발생 (1계약 기준)
 """)
 
@@ -36,11 +36,11 @@ if user_key not in st.session_state.user_data:
 data = st.session_state.user_data[user_key]
 
 # 사용자 입력 (초기값은 session_state에서 가져오기)
-capital = st.number_input("총 자본 입력 (USD)", min_value=1000.0, step=100.0, format="%.2f", value=data["capital"], key="capital")
-entry_price = st.number_input("진입가 입력", min_value=0.0, step=0.25, format="%.2f", value=data["entry_price"], key="entry_price")
-stop_price = st.number_input("손절가 입력", min_value=0.0, step=0.25, format="%.2f", value=data["stop_price"], key="stop_price")
+capital = st.number_input("총 자본 입력 (USD)", min_value=1000.0, step=100.0, format="%0,.2f", value=data["capital"], key="capital")
+entry_price = st.number_input("진입가 입력", min_value=0.0, step=0.25, format="%0,.2f", value=data["entry_price"], key="entry_price")
+stop_price = st.number_input("손절가 입력", min_value=0.0, step=0.25, format="%0,.2f", value=data["stop_price"], key="stop_price")
 risk_percent_choice = st.selectbox("허용 손실 한도 (%)", options=[1, 2, 3, 4, 5], index=int(data["risk_percent"] * 100) - 1)
-margin_per_contract = st.number_input("계약당 증거금 (USD)", min_value=500.0, step=100.0, format="%.2f", value=data["margin_per_contract"], key="margin_per_contract", help="대부분 국내 증권사 기준 약 $1,500입니다.")
+margin_per_contract = st.number_input("계약당 증거금 (USD)", min_value=500.0, step=100.0, format="%0,.2f", value=data["margin_per_contract"], key="margin_per_contract", help="대부분 국내 증권사 기준 약 $1,500입니다.")
 
 # 사용자 입력값 저장 (자동 저장된 key 값 외 보정 값만 반영)
 st.session_state.user_data[user_key]["risk_percent"] = risk_percent_choice / 100.0
